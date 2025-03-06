@@ -1,2 +1,2 @@
 # PythonTradingBot
-A python trading bot using the Backtrader package
+A python trading bot using the Vectorbt package
