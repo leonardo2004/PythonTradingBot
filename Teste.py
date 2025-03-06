@@ -3,9 +3,11 @@ import datetime
 import pandas as pd
 import numpy as np
 
+# Analysis period
 end = datetime.datetime.now()
 start = end - datetime.timedelta(days=7)
 
+# Data download (Using YFinance ; Package must be installed)
 btc_price = vbt.YFData.download(
     "BTC-USD",
     missing_index="drop",
@@ -14,6 +16,7 @@ btc_price = vbt.YFData.download(
     interval='1m'
 ).get("Close")
 
+# Creating indicator: Comparing moving averages
 def MMA(close,windowA=5,windowB=20,windowC=60, windowD=200) :
     #ma_A = vbt.MA.run(close, windowA)
     ma_B = vbt.MA.run(close, windowB)
@@ -34,6 +37,7 @@ def MMA(close,windowA=5,windowB=20,windowC=60, windowD=200) :
 
     return trend
 
+# Creating indicator: Defining factory
 ind = vbt.IndicatorFactory(
     class_name='3_signal_ma',
     short_name='3ma',
@@ -48,14 +52,13 @@ ind = vbt.IndicatorFactory(
     windowD=200
 )
 
-teste = ind.run(
+test = ind.run(
     btc_price
 )
 
-#print(teste.value.to_string())
-
-entries = teste.value == 1
-exits = teste.value == -1
+#Defining entry/exit points
+entries = test.value == 1
+exits = test.value == -1
 
 pf = vbt.Portfolio.from_signals(btc_price, entries, exits)
 print(pf.stats())
