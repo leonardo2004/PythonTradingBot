@@ -7,13 +7,15 @@ import numpy as np
 end = datetime.datetime.now()
 start = end - datetime.timedelta(days=7)
 
+vbt.settings.set_theme("dark")
+
 # Data download (Using YFinance ; Package must be installed)
 btc_price = vbt.YFData.download(
     "BTC-USD",
     missing_index="drop",
     start=start,
     end=end,
-    interval='1m'
+    interval="1m"
 ).get("Close")
 
 # Creating indicator: Comparing moving averages
@@ -39,11 +41,11 @@ def MMA(close,windowA=5,windowB=20,windowC=60, windowD=200) :
 
 # Creating indicator: Defining factory
 ind = vbt.IndicatorFactory(
-    class_name='3_signal_ma',
-    short_name='3ma',
-    input_names= ['close'],
-    param_names= ['windowA', 'windowB', 'windowC', 'windowD'],
-    output_names= ['value']
+    class_name="3_signal_ma",
+    short_name="3ma",
+    input_names= ["close"],
+    param_names= ["windowA", "windowB", "windowC", "windowD"],
+    output_names= ["value"]
 ).from_apply_func(
     MMA,
     windowA=5,
