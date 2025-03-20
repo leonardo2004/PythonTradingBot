@@ -57,7 +57,7 @@ def PrepareTicker(ticker: pd.DataFrame):
         print("Error: Could not reorganize ticker values")
     #Add a return column for benchmarking against Buy n Hold strategies
     try:
-        ticker.loc[:,"Return"] = np.log(ticker.loc[:,"Close"]).diff()
+        ticker.loc[:,"Return"] = ticker.loc[:,"Close"].diff()
         ticker.loc[ticker["Line"] == 1,"Return"] = 0
     except:
         print("Error: Could not create Return column")
@@ -107,3 +107,45 @@ def signal_SMA_direction(column: str, ticker: pd.DataFrame):
     signal = np.where((ticker[column]>ticker[column].shift(1)),1,0)
     signal = np.where((ticker[column]<ticker[column].shift(1)),-1,signal)
     return signal
+
+def run_strategy(ticker: pd.DataFrame):
+    val = 0
+    line = 0
+    total_operations = 0
+    win_operations = 0
+    for i in ticker.Entry:
+        if (i == 1):
+            if (val == 0):
+                #BUY START
+                total_operations += 1
+                delta = ticker["Close"].iat[line,0]
+                val = 1
+            elif (val == -1):
+                #SELL END
+                delta = delta - ticker["Close"].iat[line,0]
+                if delta > 0:
+                    win_operations += 1
+                print(f"SELL {delta} LINE {line}")
+                val = 0
+        elif (i == -1):
+            if (val == 0):
+                #SELL START
+                total_operations += 1
+                delta = ticker["Close"].iat[line,0]
+                val = -1
+            elif (val == 1):
+                #BUY END
+                delta = ticker["Close"].iat[line,0] - delta
+                if delta > 0:
+                    win_operations += 1
+                print(f"BUY {delta} LINE {line}")
+                val = 0
+        line += 1
+    
+    print("\n\n"+"~"*16+"Results:"+"~"*16)
+    print(f"Total operations: {total_operations}")
+    print(f"Win operations: {win_operations}")
+    if total_operations > 0:
+        print(f"Win percentage: {win_operations / total_operations *100:.2f}%")
+    
+    return True
