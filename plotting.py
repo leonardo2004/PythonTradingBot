@@ -10,16 +10,16 @@ def plot_results(ticker: pd.DataFrame):
     #Plots profits
     ax[2].plot(ticker["Return"].cumsum(), 
             label="Buy/Hold")
-    ax[2].plot(ticker["Signals_Return"].cumsum(), 
+    ax[2].plot(ticker["Strategy_Return"].cumsum(), 
             label="Strategy")
 
     #Plots the SMAs
     #Close
+    ax[0].plot(ticker["5_Close_SMA"], 
+            label="SMA 5", 
+            color="xkcd:lavender")
     ax[0].plot(ticker["20_Close_SMA"], 
             label="SMA 20", 
-            color="xkcd:lavender")
-    ax[0].plot(ticker["60_Close_SMA"], 
-            label="SMA 60", 
             color="xkcd:light purple")
     ax[0].plot(ticker["200_Close_SMA"], 
             label="SMA 200", 
@@ -34,7 +34,7 @@ def plot_results(ticker: pd.DataFrame):
                 ec="k", label="Volume", 
                 color="xkcd:black", 
                 align='edge', 
-                width=np.timedelta64(1, "m"))
+                width=np.timedelta64(5, "m"))
 
     #Make the entry points
     ax[1].plot(ticker.loc[ticker["Entry"]>0].index.values, 
